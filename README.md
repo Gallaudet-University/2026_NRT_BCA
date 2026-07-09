@@ -17,7 +17,7 @@ The NSF award is undiscounted due to the initial year of this program and treate
 snpv = total_snpv - nsf_award
 ```
 
-## 2. Fixed Parameters
+------
 
 ##### The Structural Derivation
 
@@ -64,7 +64,7 @@ $$\Delta U = \ln(Y_1) - \ln(Y_0)$$
 
 To convert this utility change back into monetary terms (the Welfare Balance, or $CV$), econometric theory mandates dividing the utility difference by the marginal utility of wealth evaluated at the baseline, $\lambda_0 = \frac{1}{Y_0}$:
 
-$$\text{Welfare Balance (in \$)} \approx \frac{\Delta U}{\lambda_0} = \frac{\ln(Y_1) - \ln(Y_0)}{1/Y_0} = Y_0 \left[ \ln(Y_1) - \ln(Y_0) \right]$$
+$$\text{Welfare Balance (in dollars)} \approx \frac{\Delta U}{\lambda_0} = \frac{\ln(Y_1) - \ln(Y_0)}{1/Y_0} = Y_0 \left[ \ln(Y_1) - \ln(Y_0) \right]$$
 
 ##### 4. Reconciling with Your Variables
 
@@ -72,7 +72,9 @@ If we assume that unearned income $I = 0$, then the baseline total income is exa
 
 Therefore:
 
-> **General Microeconomic Foundation:** > Welfare Balance = Target Earning $\times$ ($\ln$(Higher Wage Baseline) $-$ $\ln$(Lower Income Baseline))
+> **General Microeconomic Foundation:** Welfare Balance = Target Earning $\times$ ($\ln$(Higher Wage Baseline) $-$ $\ln$(Lower Income Baseline))
+
+## 2. Fixed Parameters
 
 ### 2.1 Work Surplus (Post-Graduation Years 2–29)
 
