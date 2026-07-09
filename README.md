@@ -52,7 +52,7 @@ $$\ln(w_1\bar{H} + I - CV) = \ln(w_0\bar{H} + I)$$
 
 ##### 3. First-Order Taylor Approximation
 
-To see where your exact log-difference formula originates, we take a first-order Taylor expansion of the utility change $\Delta U$ with respect to the income baselines ($Y_1 = w_1\bar{H} + I$ and $Y_0 = w_0\bar{H} + I$).
+To see where your exact log-difference formula originates, apply a first-order Taylor expansion of the utility change $\Delta U$ with respect to the income baselines ($Y_1 = w_1\bar{H} + I$ and $Y_0 = w_0\bar{H} + I$).
 
 The marginal utility of income is defined as:
 
@@ -68,7 +68,7 @@ $$\text{Welfare Balance (in dollars)} \approx \frac{\Delta U}{\lambda_0} = \frac
 
 ##### 4. Reconciling with Your Variables
 
-If we assume that unearned income $I = 0$, then the baseline total income is exactly equal to the reference target earning ($Y_0 = w_0\bar{H} = \text{Target Earning}$).
+Suppose that unearned income $I = 0$, then the baseline total income is exactly equal to the reference target earning ($Y_0 = w_0\bar{H} = \text{Target Earning}$).
 
 Therefore:
 
