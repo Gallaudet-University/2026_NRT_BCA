@@ -292,9 +292,9 @@ worst_ACT02<-npv_calc_utility(COE_util = 0.10,
                       privat_r = 0.1,
                       social_r = 0.05)
 
-print(paste("Base: Difference:",dollar_format()(base_ACT02$npv - base_util$npv),"| Social Difference:",dollar_format()(base_ACT02$snpv - base_util$snpv)))
-print(paste("Best: Difference:",dollar_format()(best_ACT02$npv - best_util$npv),"| Social Difference:",dollar_format()(best_ACT02$snpv - best_util$snpv)))
-print(paste("Worst: Difference:",dollar_format()(worst_ACT02$npv - worst_util$npv),"| Social Difference:",dollar_format()(worst_ACT02$snpv - worst_util$snpv)))
+print(paste("ACT-02 Base: Difference:",dollar_format()(base_ACT02$npv - base_util$npv),"| Social Difference:",dollar_format()(base_ACT02$snpv - base_util$snpv)))
+print(paste("ACT-02 Best: Difference:",dollar_format()(best_ACT02$npv - best_util$npv),"| Social Difference:",dollar_format()(best_ACT02$snpv - best_util$snpv)))
+print(paste("ACT-02 Worst: Difference:",dollar_format()(worst_ACT02$npv - worst_util$npv),"| Social Difference:",dollar_format()(worst_ACT02$snpv - worst_util$snpv)))
 
 
 # ACT-03------------------------------------------------------------------------
@@ -329,13 +329,13 @@ worst_ACT03 <- npv_calc_utility(NC_target_wage = parameter_Entry_CE_target_wage,
                                 privat_r=0.1, 
                                 social_r=0.05)
 
-print(paste("Base: Difference:", dollar_format()(base_ACT03$npv - base_util$npv), 
+print(paste("ACT-03 Base: Difference:", dollar_format()(base_ACT03$npv - base_util$npv), 
             "| Social Difference:", dollar_format()(base_ACT03$snpv - base_util$snpv)))
 
-print(paste("Best: Difference:", dollar_format()(best_ACT03$npv - best_util$npv), 
+print(paste("ACT-03 Best: Difference:", dollar_format()(best_ACT03$npv - best_util$npv), 
             "| Social Difference:", dollar_format()(best_ACT03$snpv - best_util$snpv)))
 
-print(paste("Worst: Difference:", dollar_format()(worst_ACT03$npv - worst_util$npv), 
+print(paste("ACT-03 Worst: Difference:", dollar_format()(worst_ACT03$npv - worst_util$npv), 
             "| Social Difference:", dollar_format()(worst_ACT03$snpv - worst_util$snpv)))
 
 # ACT-04------------------------------------------------------------------------
@@ -371,13 +371,13 @@ worst_ACT04<-npv_calc_utility(add_to_each_new_cohort = 2,
                               privat_r = 0.1,
                               social_r = 0.05)
 
-print(paste("Base: Difference:", dollar_format()(base_ACT04$npv - base_util$npv), 
+print(paste("ACT-04 Base: Difference:", dollar_format()(base_ACT04$npv - base_util$npv), 
             "| Social Difference:", dollar_format()(base_ACT04$snpv - base_util$snpv)))
 
-print(paste("Best: Difference:", dollar_format()(best_ACT04$npv - best_util$npv), 
+print(paste("ACT-04 Best: Difference:", dollar_format()(best_ACT04$npv - best_util$npv), 
             "| Social Difference:", dollar_format()(best_ACT04$snpv - best_util$snpv)))
 
-print(paste("Worst: Difference:", dollar_format()(worst_ACT04$npv - worst_util$npv), 
+print(paste("ACT-04 Worst: Difference:", dollar_format()(worst_ACT04$npv - worst_util$npv), 
             "| Social Difference:", dollar_format()(worst_ACT04$snpv - worst_util$snpv)))
 
 # ACT-06------------------------------------------------------------------------
@@ -412,13 +412,13 @@ worst_ACT06<-npv_calc_utility(attrition_rate = parameter_attrition_rate - 0.007,
                               social_r = 0.05)
 
 
-print(paste("Base: Difference:", dollar_format()(base_ACT06$npv - base_util$npv), 
+print(paste("ACT-06 Base: Difference:", dollar_format()(base_ACT06$npv - base_util$npv), 
             "| Social Difference:", dollar_format()(base_ACT06$snpv - base_util$snpv)))
 
-print(paste("Best: Difference:", dollar_format()(best_ACT06$npv - best_util$npv), 
+print(paste("ACT-06 Best: Difference:", dollar_format()(best_ACT06$npv - best_util$npv), 
             "| Social Difference:", dollar_format()(best_ACT06$snpv - best_util$snpv)))
 
-print(paste("Worst: Difference:", dollar_format()(worst_ACT06$npv - worst_util$npv), 
+print(paste("ACT-06 Worst: Difference:", dollar_format()(worst_ACT06$npv - worst_util$npv), 
             "| Social Difference:", dollar_format()(worst_ACT06$snpv - worst_util$snpv)))
 
 
@@ -455,13 +455,13 @@ worst_ACT07 <- npv_calc_utility(add_to_each_new_cohort = 2,
                                 privat_r               = 0.10,
                                 social_r               = 0.05)
 
-print(paste("Base: Difference:", dollar_format()(base_ACT07$npv - base_util$npv), 
+print(paste("ACT-07 Base: Difference:", dollar_format()(base_ACT07$npv - base_util$npv), 
             "| Social Difference:", dollar_format()(base_ACT07$snpv - base_util$snpv)))
 
-print(paste("Best: Difference:", dollar_format()(best_ACT07$npv - best_util$npv), 
+print(paste("ACT-07 Best: Difference:", dollar_format()(best_ACT07$npv - best_util$npv), 
             "| Social Difference:", dollar_format()(best_ACT07$snpv - best_util$snpv)))
 
-print(paste("Worst: Difference:", dollar_format()(worst_ACT07$npv - worst_util$npv), 
+print(paste("ACT-07 Worst: Difference:", dollar_format()(worst_ACT07$npv - worst_util$npv), 
             "| Social Difference:", dollar_format()(worst_ACT07$snpv - worst_util$snpv)))
 # ACT-08------------------------------------------------------------------------
 # Gitea + Medallion in Gallaudet University for AI foundation
@@ -503,11 +503,11 @@ worst_ACT08 <- npv_calc_utility(sear_y_2 = 1.00 * (1 - (1.00 * 0.00)), # No disc
                                 COE_util=0.10, 
                                 prob_ris=0.13)
 
-print(paste("Base: Difference:", dollar_format()(base_ACT08$npv - base_util$npv), 
+print(paste("ACT-08 Base: Difference:", dollar_format()(base_ACT08$npv - base_util$npv), 
             "| Social Difference:", dollar_format()(base_ACT08$snpv - base_util$snpv)))
 
-print(paste("Best: Difference:", dollar_format()(best_ACT08$npv - best_util$npv), 
+print(paste("ACT-08 Best: Difference:", dollar_format()(best_ACT08$npv - best_util$npv), 
             "| Social Difference:", dollar_format()(best_ACT08$snpv - best_util$snpv)))
 
-print(paste("Worst: Difference:", dollar_format()(worst_ACT08$npv - worst_util$npv), 
+print(paste("ACT-08 Worst: Difference:", dollar_format()(worst_ACT08$npv - worst_util$npv), 
             "| Social Difference:", dollar_format()(worst_ACT08$snpv - worst_util$snpv)))
