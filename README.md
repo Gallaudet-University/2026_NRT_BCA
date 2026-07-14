@@ -1,91 +1,39 @@
-# Benefit-Cost Analysis Model
+# Benefit-Cost Analysis & Evaluation Model: Universal AI Pipeline (NRT-IPP)
 
 This document describes the current model implemented in `main.R`. The script simulates a benefit-cost analysis for a 20-trainee AI pipeline, calculates discounted net benefits, and reports Net Present Value (NPV) and Social Net Present Value (SNPV) across base, best, and worst cases in constant October 2025 dollars (Real Business Lifecycle).
 
-## 1. Model Purpose
+## 1. Model Purpose & Microeconomic Foundations
 
-The script estimates the discounted economic value of the pipeline under a counterfactual program structure. It combines trainee-level wage premiums, education support, opportunity costs, tuition costs, industry productivity, internship costs, and labor-market frictions.
+The script `main.R` models a structural Benefit-Cost Analysis to simulate a 35-year lifecycle horizon for the program cohorts. It evaluates the net economic impacts on trainees, firms, and societal externalities against a counterfactual "No-Action" baseline.
 
-Two aggregate metrics are produced:
+The analysis is grounded in the microeconomic labor-leisure optimization framework, accounting for behavioral constraints like the backward-bending labor supply curve. Individual satisfaction is modeled using a strictly non-linear logarithmic utility function:
 
-* **NPV:** Total discounted net benefit using the private discount rate.
-* **SNPV:** Total discounted net benefit using the social discount rate, minus the NSF award.
+$$U(L,H) = \ln(L) - \ln(H)$$
 
-The NSF award is undiscounted due to the initial year of this program and treated as a cost in the SNPV:
+Where $L$ represents leisure hours ($\ln(L)$ capturing the diminishing marginal utility of income) and $H$ denotes labor hours ($\ln(H)$ capturing compounding marginal disutility). 
 
-```r
-snpv = total_snpv - nsf_award
-```
+Welfare transitions are mathematically formalized as:
 
-------
+$$\Delta \text{Welfare Balance} = L \cdot \ln\left(\frac{w_1}{w_0}\right)$$
 
-##### The Structural Derivation
+Under real-world conditions, labor market frictions degrade Pareto-efficiency. The model incorporates joint probabilities of unemployment/underemployment $P(E)_c$, annual search penalties $S_t$, and attrition rates $P(A)_c$ to determine realized wages ($w_1$) and deadweight losses ($DWL$):
 
-Let a worker have a classic Stone-Geary or logarithmic utility function over consumption ($C$) and labor hours ($H$), given a total time endowment $T$:
+$$w_1 = w_{\text{target}}(1 - S_t)P(E)_c$$
 
-$$U(C, H) = \ln(C) - \psi(H)$$
+$$\text{Surplus} = P(A)_c \cdot L \cdot \ln\left(\frac{w_1}{w_0}\right)$$
 
-Where $\psi(H)$ is the convex disutility of work.
+$$\text{DWL} = P(A)_c \cdot L \cdot \ln\left(\frac{w_{\text{target}}}{w_1}\right)$$
 
-##### 1. The Budget Constraint and "Target Earning"
-
-The worker faces the budget constraint $C = wH + I$, where $w$ is the hourly wage rate and $I$ is unearned baseline income.
-
-Under this behavioral framework, workers optimize up until a reference earnings target $\bar{Y} = wH$, at which point the marginal disutility of labor $\psi'(H)$ becomes effectively infinite (a hard kink in preferences). Thus, in the neighborhood of the target:
-
-* $H \approx \bar{H}$ (hours are locally inelastic).
-* Total Earned Income is fixed at $\bar{Y} = w\bar{H}$.
-
-##### 2. Defining Welfare via Money-Metric Utility
-
-Welfare changes in econometrics are evaluated using the Indirect Utility Function $V(w, I)$. The compensating variation ($CV$) for a wage change from a baseline $w_0$ (Lower Income Baseline) to $w_1$ (Higher Wage Baseline) is implicitly defined by:
-
-$$V(w_1, I - CV) = V(w_0, I)$$
-
-Using our structural utility function under the localized target-earning assumption ($H = \bar{H}$):
-
-$$\ln(w_1\bar{H} + I - CV) - \psi(\bar{H}) = \ln(w_0\bar{H} + I) - \psi(\bar{H})$$
-
-The disutility of labor $\psi(\bar{H})$ cancels out across states because hours are fixed by the target:
-
-$$\ln(w_1\bar{H} + I - CV) = \ln(w_0\bar{H} + I)$$
-
-##### 3. First-Order Taylor Approximation
-
-To see where your exact log-difference formula originates, apply a first-order Taylor expansion of the utility change $\Delta U$ with respect to the income baselines ($Y_1 = w_1\bar{H} + I$ and $Y_0 = w_0\bar{H} + I$).
-
-The marginal utility of income is defined as:
-
-$$\lambda = \frac{\partial U}{\partial Y} = \frac{1}{Y}$$
-
-By the Mean Value Theorem, the change in utility between the two states can be written as:
-
-$$\Delta U = \ln(Y_1) - \ln(Y_0)$$
-
-To convert this utility change back into monetary terms (the Welfare Balance, or $CV$), econometric theory mandates dividing the utility difference by the marginal utility of wealth evaluated at the baseline, $\lambda_0 = \frac{1}{Y_0}$:
-
-$$\text{Welfare Balance (in dollars)} \approx \frac{\Delta U}{\lambda_0} = \frac{\ln(Y_1) - \ln(Y_0)}{1/Y_0} = Y_0 \left[ \ln(Y_1) - \ln(Y_0) \right]$$
-
-##### 4. Reconciling with Your Variables
-
-Suppose that unearned income $I = 0$, then the baseline total income is exactly equal to the reference target earning ($Y_0 = w_0\bar{H} = \text{Target Earning}$).
-
-Therefore:
-
-> **General Microeconomic Foundation:** Welfare Balance = Target Earning $\times$ ($\ln$(Higher Wage Baseline) $-$ $\ln$(Lower Income Baseline))
-
-## 2. Fixed Parameters
-
-### 2.1 Work Surplus (Post-Graduation Years 2–29)
+**Example of Work Surplus**
 
 | Affected Group | Old Wage | Target Wage | Surplus |
 | --- | --- | --- | --- |
-| Code Experts (CE) | $145,906.04 | $150,350 | **$9,743.21** |
+| Code Experts (CE) | $145,906.04 | $150,350 | **$4,377.63** |
 | Non-Code Experts | $84,295.86 | $99,234.37 | **$16,190.25** |
 
 *This surplus represents what trainees earn on the Pareto efficiency frontier, capturing both cash premiums and recovered leisure time. May 2022 report from BLS for the CE role is $127,260 that adjusts to $145,906.04 in October 2025. $155,000 in 2026 adjusts to $150,350 in 2025 if 3% inflation rate applies. $79,000 in 2024 from NDC dashboard adjusts to $84,295.86 and $93,000 adjusts to $99,234.37 in October 2025.*
 
-### 2.2 Opportunity Cost Deficit (Training Years 0–1)
+**Example of Work Deficit**
 
 | Affected Group | Old Wage | Target Wage Bundle | Deficit |
 | --- | --- | --- | --- |
@@ -94,21 +42,20 @@ Therefore:
 
 *This deficit measures the welfare contraction trainees are willing to give up for a better long-term alternative if operating under Pareto efficiency.*
 
-### 2.3 Parameter Ledger
+## 2. Parameter Ledger
 
-| Parameter | Value | Description |
-| --- | --- | --- |
-| `CE_target_wage` | `$155,000` | Target income CE is willing to give up to get (Frictionless baseline). |
-| `NC_target_wage` | `$93,000` | Target income NC is willing to give up to get (Frictionless baseline). |
-| `CE_old_wage` | `$127,260` | The old income CE had before enrollment. |
-| `NC_old_wage` | `$79,000` | The old income NC had before enrollment. |
-| `stipend` | `$37,000` | Annual stipend for funded trainees during training years. |
-| `COE_wage` | `$16,000` | Annual cost-of-education allocation used for funded trainees. |
-| `nsf_award` | `$4,500,000` | NSF award deducted from social NPV. |
-| `tuition` | `$21,168` | Annual tuition cost for non-funded trainees during training years. |
-| `intern_cost` | `$2,500` | Industry internship cost applied in trainee experience year 1. |
-| `onboard_NC` | `$4,700` | One-time recruitment friction applied in experience year 2 for non-coders. |
-| `onboard_CE` | `$6,200` | One-time specialized onboarding friction applied in experience year 2 for coding experts. |
+| Parameter | Script Variable | Value | Description |
+|:-- |:-- | --:|:-- |
+| **CE Target Wage** | `parameter_CE_target_wage` | `$155,000` | Frictionless baseline target income for Coding Experts. |
+| **NC Target Wage** | `parameter_NC_target_wage` | `$93,000` | Frictionless baseline target income for Non-Coders. |
+| **CE Old Wage** | `parameter_CE_old_wage` | `$145,906.04` | Baseline income for Coding Experts before enrollment. |
+| **NC Old Wage** | `parameter_NC_old_wage` | `$84,295.86` | Baseline income for Non-Coders before enrollment. |
+| **Trainee Stipend** | `parameter_stipend` | `$37,000` | Annual stipend for funded trainees during training years. |
+| **Cost of Ed.** | `parameter_COE_wage` | `$16,000` | Institutional cost-of-education funding allocation. |
+| **Internship Cost** | `parameter_intern_cost` | `$2,500` | Industry internship overhead per trainee in year 1. |
+| **Onboarding NC** | `parameter_onboard_NC` | `$4,700` | Friction adjustment for placing non-coders into entry roles. |
+| **Onboarding CE** | `parameter_onboard_CE` | `$6,200` | Friction adjustment for placing specialized coding experts. |
+| **Baseline Attrition** | `parameter_attrition_rate` | `23.0%` | Council of Graduate Schools baseline Master's attrition rate. |
 
 ## 3. Cohort Structure
 
@@ -121,13 +68,7 @@ The simulated portfolio contains 20 trainees. Trainees are assigned to four type
 | `FT-NC` | Funded trainee, non-coder. |
 | `NT-NC` | Non-funded trainee, non-coder. |
 
-The four trainee types enter as one batch per start year. The `t_start` value is calculated as:
-
-```r
-t_start = (0:19) %/% 4
-```
-
-This creates five entry batches, with four trainees starting in each of years 0, 1, 2, 3, and 4.
+If the simulation adjusts to increasing the number of trainees per cohort after the initial cohort, the FT is at 25 maximum while NT is without a limit.
 
 ## 4. Time Horizon
 
@@ -150,16 +91,7 @@ Rows are included only when:
 
 This gives each trainee up to 30 observed experience years, from `t_exp = 0` through `t_exp = 29`.
 
-## 5. Trainee-Level Calculations
-
-### 5.1 Tuition Expenditure
-
-Non-funded non-coder trainees pay $21,168 tuition during training years. This applies when:
-
-* trainee type contains `NT-NC`, and
-* `t_exp <= 1`.
-
-### 5.2 Post-Graduation Reference Benchmarks
+## 5. Post-Graduation Reference Benchmarks
 
 Post-graduation reference boundaries begin at `t_exp >= 2`. To maintain structural validity and align with Search-Matching Theory, `comp_industry` functions as an unreduced Pareto optimal reference:
 
@@ -168,7 +100,7 @@ comp_industry = ifelse(is_CE, CE_target_wage, NC_target_wage)
 old_wage      = ifelse(is_CE, CE_old_wage,     NC_old_wage)
 ```
 
-### 5.3 Adjusted Work Surplus Under Non-Pareto Efficiency
+## 6. Adjusted Work Surplus Under Non-Pareto Efficiency
 
 The worker's realized surplus is scaled downward by search friction (`sear_y`) and labor-market risk (`prob_ris`) to reflect real-world transactional friction:
 
@@ -186,18 +118,22 @@ work_surplus = (comp_industry * (log(comp_industry) - log(old_wage))) * (1 - sea
 
 *No work surplus is counted during training years (`t_exp <= 1`).*
 
-### 5.4 Adjusted Work Deficit Under Non-Pareto Efficiency
+## 7. Adjusted Work Deficit Under Non-Pareto Efficiency
 
 Funded trainees (`FT-`) experience an opportunity cost deficit during training years (`t_exp <= 1`). The temporary training bundle incorporates institutional funding and utilization variables:
 
 ```r
+# If FT-NC or FT-CE
 COE_Stipend  = (COE_wage * COE_util) + stipend
 work_deficit = old_wage * (log(COE_Stipend) - log(old_wage))
+
+# If NT-NC
+work_deficit = old_wage * (log(1) - log(old_wage))
 ```
 
 *For non-funded trainees (`NT-CE`), `work_deficit` equals `0` (their full opportunity cost profile is captured via raw tuition outlays and unearned wage baselines).*
 
-### 5.5 Industry Productivity and Realized Profit
+## 8. Industry Productivity and Realized Profit
 
 To properly account for labor market monopsoristic power and wage markdowns without double-counting worker benefits, Marginal Revenue Product (`mrp`) is calculated off the intact Pareto capacity.
 
@@ -214,7 +150,7 @@ realized_wage = comp_industry * (1 - sear_y) * (1 - prob_ris)
 indiv_net_profit = mrp - realized_wage
 ```
 
-### 5.6 Deadweight Loss from Friction
+## 9. Deadweight Loss from Friction
 
 The economic value destroyed due to structural barriers, search inefficiencies, and market risk is mathematically captured by measuring the area under the behavioral curve between the optimal benchmark and the deflated wage profile:
 
@@ -222,7 +158,7 @@ The economic value destroyed due to structural barriers, search inefficiencies, 
 deadweight_loss_friction = comp_industry * (log(comp_industry) - log(realized_wage))
 ```
 
-## 6. Aggregate Costs, Benefits, and Discounting
+## 10. Aggregate Costs, Benefits, and Discounting
 
 For each trainee-year row within the tracking matrix, benefits and costs are aggregated as:
 
@@ -254,46 +190,54 @@ npv  = total_npv
 snpv = total_snpv - nsf_award
 ```
 
-## 7. Scenario Assumptions
+## 10. Scenario Assumptions
 
 The script evaluates three discrete variance profiles:
 
 | Parameter | Base Case | Best Case | Worst Case |
-| --- | --- | --- | --- |
+| :-- | --: | --: | --: |
+| `social_r` | `0.03` | `0.01` | `0.05` |
 | `COE_util` | `0.50` | `0.90` | `0.10` |
 | `sear_y_2` | `0.50` | `0.25` | `1.00` |
 | `sear_y_3` | `0.05` | `0.01` | `0.09` |
 | `prob_ris` | `0.117` | `0.076` | `0.13` |
 | `mrp_coef` | `0.70` | `0.75` | `0.65` |
-| `privat_r` | `0.07` | `0.05` | `0.10` |
-| `social_r` | `0.03` | `0.01` | `0.05` |
 
-> **Note: CE may generate 3-to-5 times while NC may generate 1.3-to-1.5 times in term of MRP. Thus, the base, best, and worst cases are (1*2 + 0.4*2)/4, (1*2 + 0.5*2)/4 (1*2 + 0.3*2)/4 where 4 are trainees and 2 each is CE and NC, respectively.**
+> **Note: in studies, CE may generate 3-to-5 times while NC may generate 1.3-to-1.5 times in term of MRP. But this model intends to be conservative.**
 
-## 8. Expected Script Output
+## 11. Expected Script Output
 
 Based on the formulas and parameters in `main.R`, the expected printed results for baseline are:
 
 | Scenario | NPV | SNPV |
 | :-- | --: | --: |
-| Base Case | `$51,099,914` | `$65,670,956` |
-| Best Case | `$93,584,534` | `$163,815,802` |
-| Worst Case | ` -$95,607,626` | `-$235,058,570` |
+| Base Case | `$4,848,254` | `$7,940,638` |
+| Best Case | `$11,014,370` | `$23,114,822` |
+| Worst Case | ` -$14,271,891` | `-$34,505,195` |
 
-## 9. Implementation Notes
+## 12. Implementation Notes
 
 The main function is:
 
 ```r
-npv_calc <- function(
-  COE_util = 0.50,
-  sear_y_2 = 0.50,
-  sear_y_3 = 0.05,
-  prob_ris = 0.117,
-  mrp_coef = 0.05,
-  privat_r = 0.07,
-  social_r = 0.03
-)
+r <- npv_calc_utility(COE_util = 0.50, 
+                      sear_y_2 = 0.50, 
+                      sear_y_3 = 0.05, 
+                      prob_ris = 0.117, 
+                      mrp_coef = 0.70,
+                      privat_r = 0.07,
+                      social_r = 0.03,
+                      attrition_rate = parameter_attrition_rate,
+                      add_to_each_new_cohort = 0,
+                      CE_target_wage=parameter_CE_target_wage,
+                      NC_target_wage=parameter_NC_target_wage,
+                      CE_old_wage=parameter_CE_old_wage,   
+                      NC_old_wage=parameter_NC_old_wage,    
+                      stipend=parameter_stipend,        
+                      COE_wage=parameter_COE_wage,       
+                      intern_cost=parameter_intern_cost,     
+                      onboard_NC=parameter_onboard_NC,      
+                      onboard_CE=parameter_onboard_CE)
 ```
 
 It returns a list with:
@@ -306,19 +250,28 @@ It returns a list with:
 
 The script runs `npv_calc()` once for each scenario and prints the NPV and SNPV values.
 
-## 10. Citations for Cost and Benefit Assumptions
+If you just want to run this script, copy and paste this in RStudio in **2026_NRT_BCA** folder: `source('main.R')`
 
-The current script does not store citations directly, but the cost and benefit assumptions are justified by the source set from the prior BCA document:
+## 13. References
 
-- ASPE standard regulatory impact analysis values: [https://aspe.hhs.gov/sites/default/files/documents/2d83af5823915d81871334ee08ad03d9/Standard-RIA-Values-2026.pdf](https://aspe.hhs.gov/sites/default/files/documents/2d83af5823915d81871334ee08ad03d9/Standard-RIA-Values-2026.pdf)
-- Gallaudet graduate tuition reference: [https://gallaudet.edu/finance/student-financial-services/tuition/#graduate](https://gallaudet.edu/finance/student-financial-services/tuition/#graduate)
-- National Deaf Center employment and earnings dashboard: [https://dashboard.nationaldeafcenter.org/?main=Employment%2FEarnings+by+Education&attr=overall&chart_type=levels&status=Median+Earnings](https://dashboard.nationaldeafcenter.org/?main=Employment%2FEarnings+by+Education&attr=overall&chart_type=levels&status=Median+Earnings)
-- NSF Graduate Research Fellowship Program funding reference: [https://www.nsf.gov/funding/opportunities/grfp-nsf-graduate-research-fellowship-program](https://www.nsf.gov/funding/opportunities/grfp-nsf-graduate-research-fellowship-program)
-- BLS software developer occupational employment and wage statistics: [https://www.bls.gov/oes/2022/may/oes151252.htm](https://www.bls.gov/oes/2022/may/oes151252.htm)
-- Fokal machine learning engineer salary reference: [https://www.fokal.com/ai-seo-research/machine-learning-engineer-salary/](https://www.fokal.com/ai-seo-research/machine-learning-engineer-salary/)
-- BLS local area unemployment statistics: [https://www.bls.gov/lau/stalt.htm](https://www.bls.gov/lau/stalt.htm)
-- SHRM non-executive talent acquisition benchmarking baseline: [https://www.shrm.org/topics-tools/research/recruiting-benchmarking](https://www.shrm.org/topics-tools/research/recruiting-benchmarking)
-- Technical and engineering sourcing premium metrics: [https://interviewcost.com/shrm-cost-per-hire](https://interviewcost.com/shrm-cost-per-hire)
-- Computing Productivity: Firm-Level Evidence: [doi:10.1162/003465303772815736](https://doi.org/10.1162/003465303772815736)
-- Monopsony in the U.S. Labor Market: [https://ideas.repec.org/p/upj/weupjo/22-364.html](https://ideas.repec.org/p/upj/weupjo/22-364.html)
-- Social-belonging intervention: [https://www-science-org.ezproxy.lib.utexas.edu/doi/pdf/10.1126/science.ade4420](https://www-science-org.ezproxy.lib.utexas.edu/doi/pdf/10.1126/science.ade4420)
+American Psychological Association. (2026). ASPE standard regulatory impact analysis values. U.S. Department of Health and Human Services. https://aspe.hhs.gov/sites/default/files/documents/2d83af5823915d81871334ee08ad03d9/Standard-RIA-Values-2026.pdf
+
+Brynjolfsson, E., & Hitt, L. M. (2003). Computing productivity: Firm-level evidence. The Review of Economics and Statistics, 85(4), 793–808. https://doi.org/10.1162/003465303772815736
+
+Bureau of Labor Statistics. (2022). Software developers (Occupational Employment and Wage Statistics, Code 15-1252). U.S. Department of Labor. https://www.bls.gov/oes/2022/may/oes151252.htm
+
+Bureau of Labor Statistics. (2026). Alternative measures of labor underutilization for states (Local Area Unemployment Statistics). U.S. Department of Labor. https://www.bls.gov/lau/stalt.htm
+
+Fokal. (n.d.). Machine learning engineer salary reference. Fokal AI SEO Research. https://www.fokal.com/ai-seo-research/machine-learning-engineer-salary/
+
+InterviewCost. (n.d.). SHRM cost per hire guide: Technical and engineering sourcing premium metrics. https://interviewcost.com/shrm-cost-per-hire
+
+National Deaf Center on Postsecondary Outcomes. (n.d.). Employment and earnings dashboard: Median earnings by education. https://dashboard.nationaldeafcenter.org/?main=Employment%2FEarnings+by+Education&attr=overall&chart_type=levels&status=Median+Earnings
+
+National Science Foundation. (n.d.). Graduate Research Fellowship Program (GRFP). https://www.nsf.gov/funding/opportunities/grfp-nsf-graduate-research-fellowship-program
+
+Society for Human Resource Management. (n.d.). Recruiting benchmarking: Non-executive talent acquisition baseline. SHRM Research. https://www.shrm.org/topics-tools/research/recruiting-benchmarking
+
+Walton, G. M., Murphy, M. C., Logel, C., Yeager, D. S., Goyer, J. P., Brady, S. T., ... & Krosch, D. J. (2023). A scalable social-belonging intervention to improve academic outcomes. Science, 379(6634), eade4420. https://doi.org/10.1126/science.ade4420
+
+Yeh, C., Macaluso, C., & Hershbein, B. (2022). Monopsony in the U.S. labor market (Upjohn Institute Working Paper No. 22-364). W.E. Upjohn Institute for Employment Research. https://ideas.repec.org/p/upj/weupjo/22-364.html
