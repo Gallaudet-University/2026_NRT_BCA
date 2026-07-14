@@ -1,6 +1,7 @@
 library(dplyr)
 library(tidyr)
 library(scales)
+library(ggplot2)
 
 # Parameters Matrix ------------------------------------------------------------
 parameter_CE_target_wage=155350   # Target income CE is willing to give up to get
@@ -10,7 +11,6 @@ parameter_NC_old_wage=84295.86    # The old income NC had before enrollment.
 parameter_stipend=37000           # Annual stipend for funded trainees during training years. 
 parameter_COE_wage=16000          # Annual cost-of-education allocation used for funded trainees.
 parameter_nsf_award=4500000       # NSF award deducted from social NPV.
-parameter_tuition=21168           # Annual tuition cost for non-funded trainees during training years.
 parameter_intern_cost=2500        # Industry internship cost applied in trainee experience year 1.
 parameter_onboard_NC=4700         # One-time recruitment friction applied in experience year 2 for non-coders.
 parameter_onboard_CE=6200         # One-time specialized onboarding friction applied in experience year 2 for coding experts.
@@ -32,8 +32,6 @@ npv_calc_utility <- function(COE_util = 0.50,
                              NC_old_wage=parameter_NC_old_wage,    
                              stipend=parameter_stipend,        
                              COE_wage=parameter_COE_wage,       
-                             nsf_award=parameter_nsf_award,    
-                             tuition=parameter_tuition,        
                              intern_cost=parameter_intern_cost,     
                              onboard_NC=parameter_onboard_NC,      
                              onboard_CE=parameter_onboard_CE){
@@ -105,7 +103,6 @@ npv_calc_utility <- function(COE_util = 0.50,
         TRUE ~ 0 # NT-CE retains their baseline wage, utility change is 0
       ),
       
-      tuition_expenditure_i = ifelse(grepl("NT-", type) & t_exp < 2, tuition, 0),
       intern_cost_1 = ifelse(t_exp == 1, intern_cost, 0),
       
       # --- POST-GRADUATION PHASE ---
@@ -151,7 +148,7 @@ npv_calc_utility <- function(COE_util = 0.50,
                                           0),
       
       # --- LIFECYCLE TOTALS ---
-      costs        = tuition_expenditure_i + intern_cost_1 + onboard_cost_2,
+      costs        =  intern_cost_1 + onboard_cost_2,
       social_costs = costs + deadweight_loss_friction_i,
       
       # Total Private Benefit combines Firm Wealth + Worker Welfare
@@ -164,7 +161,7 @@ npv_calc_utility <- function(COE_util = 0.50,
   total_npv  <- sum(sim_df$individual_time_npv)
   total_snpv <- sum(sim_df$individual_time_snpv)
   
-  return(list(data = sim_df, npv = total_npv, snpv = total_snpv - nsf_award))
+  return(list(data = sim_df, npv = total_npv, snpv = total_snpv))
 }
 
 # Base-Case, Best-Case, and Worst-Case Value
@@ -187,6 +184,75 @@ worst_util <- npv_calc_utility(COE_util=0.10,
 print(paste("Base-Case NPV:", dollar(base_util$npv), " | SNPV:", dollar(base_util$snpv)))
 print(paste("Best-Case NPV:", dollar(best_util$npv), " | SNPV:", dollar(best_util$snpv)))
 print(paste("Worst-Case NPV:", dollar(worst_util$npv), " | SNPV:", dollar(worst_util$snpv)))
+
+# Plot--------------------------------------------------------------------------
+get_cum_snpv <- function(res,scenario_name) {
+  res$data %>%
+    group_by(t) %>%
+    summarise(annual_snpv = sum(individual_time_snpv, na.rm = TRUE)) %>%
+    ungroup() %>%
+    mutate(
+      cumulative_snpv = cumsum(annual_snpv),
+      scenario = scenario_name
+    )
+}
+
+base_df  <- get_cum_snpv(base_util,"Baseline") 
+best_df  <- get_cum_snpv(best_util,"Best Case")
+worst_df <- get_cum_snpv(worst_util,"Worst Case")
+
+ribbon_data <- base_df %>%
+  select(t, baseline = cumulative_snpv) %>%
+  left_join(select(best_df, t, best = cumulative_snpv), by = "t") %>%
+  left_join(select(worst_df, t, worst = cumulative_snpv), by = "t")
+
+lbl_best     <- paste0("Best Case (",     dollar_format(scale_cut = cut_short_scale(), accuracy = 0.1)(best_util$snpv), ")")
+lbl_baseline <- paste0("Base Case (",     dollar_format(scale_cut = cut_short_scale(), accuracy = 0.1)(base_util$snpv), ")")
+lbl_worst    <- paste0("Worst Case (",    dollar_format(scale_cut = cut_short_scale(), accuracy = 0.1)(worst_util$snpv), ")")
+
+manual_linetypes <- c("dotted", "dashed", "twodash")
+names(manual_linetypes) <- c(lbl_best, lbl_baseline, lbl_worst)
+
+p <- ggplot(ribbon_data, aes(x = t)) +
+  geom_hline(yintercept = 0, color = "black", linetype = "solid", linewidth = 0.4, alpha = 0.5) +
+  geom_ribbon(aes(ymin = worst, ymax = best), fill = "black", alpha = 0.08) +
+  
+  geom_line(aes(y = best,     linetype = lbl_best),     color = "black", linewidth = 0.5) +  
+  geom_line(aes(y = baseline, linetype = lbl_baseline), color = "black", linewidth = 1) +
+  geom_line(aes(y = worst,    linetype = lbl_worst),    color = "black", linewidth = 0.5) + 
+  
+  scale_linetype_manual(values = manual_linetypes, breaks = c(lbl_best, lbl_baseline, lbl_worst)) +
+  scale_x_continuous(breaks = seq(0, 34, by = 5), expand = expansion(mult = c(0.02, 0.05))) +
+  scale_y_continuous(labels = label_dollar(scale = 1e-6, suffix = "M")) +
+  labs(
+    x = "Simulation Year (t)",
+    y = NULL,
+    linetype = NULL 
+  ) +
+  theme_classic() + # Strip default theme settings first
+  theme(
+    # FORCE ALL TEXT TO EXACTLY 11 PT
+    axis.title.x = element_text(size = 11, color = "black", margin = margin(t = 10)),
+    axis.title.y = element_text(size = 11, color = "black", margin = margin(r = 10)),
+    axis.text.x  = element_text(size = 11, color = "black"),
+    axis.text.y  = element_text(size = 11, color = "black"),
+    legend.title = element_text(size = 11, color = "black", face = "bold"),
+    legend.text  = element_text(size = 11, color = "black"),
+    
+    # Layout Adjustments
+    axis.line       = element_line(color = "black", linewidth = 0.5),
+    legend.position = "top"
+  )
+
+ggsave(
+  filename   = "simulation_plot.png", 
+  plot       = p, 
+  device     = "png", 
+  dpi        = 300,        # High print resolution
+  width      = 6.5,        # Width in inches (standard page width)
+  height     = 4.5,        # Aspect ratio control
+  units      = "in"
+)
 
 # ACT-02------------------------------------------------------------------------
 # ACT-02: GIEI and other events: Develop GIEI centralized approval guidelines 
