@@ -10,7 +10,6 @@ parameter_CE_old_wage=145906.04   # The old income CE had before enrollment.
 parameter_NC_old_wage=84295.86    # The old income NC had before enrollment. 
 parameter_stipend=37000           # Annual stipend for funded trainees during training years. 
 parameter_COE_wage=16000          # Annual cost-of-education allocation used for funded trainees.
-parameter_nsf_award=4500000       # NSF award deducted from social NPV.
 parameter_intern_cost=2500        # Industry internship cost applied in trainee experience year 1.
 parameter_onboard_NC=4700         # One-time recruitment friction applied in experience year 2 for non-coders.
 parameter_onboard_CE=6200         # One-time specialized onboarding friction applied in experience year 2 for coding experts.

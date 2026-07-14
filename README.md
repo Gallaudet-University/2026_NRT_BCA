@@ -46,8 +46,8 @@ $$\text{DWL} = P(A)_c \cdot L \cdot \ln\left(\frac{w_{\text{target}}}{w_1}\right
 
 | Parameter | Script Variable | Value | Description |
 |:-- |:-- | --:|:-- |
-| **CE Target Wage** | `parameter_CE_target_wage` | `$155,000` | Frictionless baseline target income for Coding Experts. |
-| **NC Target Wage** | `parameter_NC_target_wage` | `$93,000` | Frictionless baseline target income for Non-Coders. |
+| **CE Target Wage** | `parameter_CE_target_wage` | `$150,350` | Frictionless baseline target income for Coding Experts. |
+| **NC Target Wage** | `parameter_NC_target_wage` | `$99,234.37` | Frictionless baseline target income for Non-Coders. |
 | **CE Old Wage** | `parameter_CE_old_wage` | `$145,906.04` | Baseline income for Coding Experts before enrollment. |
 | **NC Old Wage** | `parameter_NC_old_wage` | `$84,295.86` | Baseline income for Non-Coders before enrollment. |
 | **Trainee Stipend** | `parameter_stipend` | `$37,000` | Annual stipend for funded trainees during training years. |
@@ -251,6 +251,8 @@ It returns a list with:
 The script runs `npv_calc()` once for each scenario and prints the NPV and SNPV values.
 
 If you just want to run this script, copy and paste this in RStudio in **2026_NRT_BCA** folder: `source('main.R')`
+
+If you want to play around with the simulation, run this file: `app.R`
 
 ## 13. References
 
