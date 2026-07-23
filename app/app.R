@@ -22,15 +22,15 @@ ui <- page_sidebar(
       ),
       accordion_panel(
         "Frictions & Attrition",
-        sliderInput("sear_y_2", "Year 2 Search Friction", min = 0, max = 1, value = 0.50, step = 0.05),
+        sliderInput("sear_y_2", "Year 2 Search Friction", min = 0, max = 1, value = 0.50, step = 0.01),
         sliderInput("sear_y_3", "Year 3+ Search Friction", min = 0.01, max = 0.1, value = 0.05, step = 0.01),
         sliderInput("prob_ris", "Probability of Risk", min = 0.076, max = 0.13, value = 0.117, step = 0.001),
         sliderInput("attrition_rate", "Annual Attrition Rate", min = 0.211, max = 0.23, value = 0.23, step = 0.001)
       ),
       accordion_panel(
         "Financial & Firm Rates",
-        sliderInput("privat_r", "Private Discount Rate", min = 0, max = 0.15, value = 0.07, step = 0.01),
-        sliderInput("social_r", "Social Discount Rate", min = 0, max = 0.5, value = 0.03, step = 0.01),
+        sliderInput("privat_r", "Private Discount Rate", min = 0.05, max = 0.09, value = 0.07, step = 0.01),
+        sliderInput("social_r", "Social Discount Rate", min = 0.01, max = 0.05, value = 0.03, step = 0.01),
         sliderInput("mrp_coef", "Firm MRP Coefficient", min = 0.65, max = 1, value = 0.70, step = 0.05)
       )
     )

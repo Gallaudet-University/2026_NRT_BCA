@@ -8,21 +8,23 @@ The script `main.R` models a structural Benefit-Cost Analysis to simulate a 35-y
 
 The analysis is grounded in the microeconomic labor-leisure optimization framework, accounting for behavioral constraints like the backward-bending labor supply curve. Individual satisfaction is modeled using a strictly non-linear logarithmic utility function:
 
-$$U(L,H) = \ln(L) - \ln(H)$$
+$$U(L,H) = \ln(L) + \ln(C)$$
 
-Where $L$ represents leisure hours ($\ln(L)$ capturing the diminishing marginal utility of income) and $H$ denotes labor hours ($\ln(H)$ capturing compounding marginal disutility). 
+Where $L$ represents leisure hours ($\ln(L)$ capturing the diminishing marginal utility of income) and $C$ denotes consumption ($\ln(C)$ capturing compounding marginal disutility). 
 
 Welfare transitions are mathematically formalized as:
 
-$$\Delta \text{Welfare Balance} = L \cdot \ln\left(\frac{w_1}{w_0}\right)$$
+$$\Delta \text{Welfare Balance} = Y_t \cdot \ln\left(\frac{w_1}{w_0}\right)$$
+
+*Where C = wH = $Y_t$ because gross income is equal to consumption.*
 
 Under real-world conditions, labor market frictions degrade Pareto-efficiency. The model incorporates joint probabilities of unemployment/underemployment $P(E)_c$, annual search penalties $S_t$, and attrition rates $P(A)_c$ to determine realized wages ($w_1$) and deadweight losses ($DWL$):
 
 $$w_1 = w_{\text{target}}(1 - S_t)P(E)_c$$
 
-$$\text{Surplus} = P(A)_c \cdot L \cdot \ln\left(\frac{w_1}{w_0}\right)$$
+$$\text{Surplus} = P(A)_c \cdot Y_t \cdot \ln\left(\frac{w_1}{w_0}\right)$$
 
-$$\text{DWL} = P(A)_c \cdot L \cdot \ln\left(\frac{w_{\text{target}}}{w_1}\right)$$
+$$\text{DWL} = P(A)_c \cdot Y_t \cdot \ln\left(\frac{w_{\text{target}}}{w_1}\right)$$
 
 **Example of Work Surplus**
 
@@ -277,3 +279,7 @@ Society for Human Resource Management. (n.d.). Recruiting benchmarking: Non-exec
 Walton, G. M., Murphy, M. C., Logel, C., Yeager, D. S., Goyer, J. P., Brady, S. T., ... & Krosch, D. J. (2023). A scalable social-belonging intervention to improve academic outcomes. Science, 379(6634), eade4420. https://doi.org/10.1126/science.ade4420
 
 Yeh, C., Macaluso, C., & Hershbein, B. (2022). Monopsony in the U.S. labor market (Upjohn Institute Working Paper No. 22-364). W.E. Upjohn Institute for Employment Research. https://ideas.repec.org/p/upj/weupjo/22-364.html
+
+Hassan, T. A., Kalyani, A., & Restrepo, P. (2026). The skill premium in times of rapid technological change (NBER Working Paper No. 34939). National Bureau of Economic Research. https://doi.org/10.3386/w34939
+
+Bettinger, E. P., & Baker, R. B. (2014). The effects of student coaching: An evaluation of a randomized experiment in student advising. Educational Evaluation and Policy Analysis, 36(1), 3–19. https://doi.org/10.3102/0162373713500523

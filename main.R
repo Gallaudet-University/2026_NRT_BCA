@@ -263,28 +263,26 @@ ggsave(
 # The assumption is:
 # - Base-Case For Act 02, the base case prevents 2 trainees per cohort from 
 # spending on a job search by reducing from 6 months (50% = 6/12) to 1 month
-# (8.3% = 1/12). Thus, 2/4 trainees x 1/12 = 2/48 (4.17%) in search 2 year.
-# Input: .5 - 2/48
+# for two trainees per cohort in search 2 year.
+# Input: (1*2+6*2)/(12*4)
 
-# - Best case is 3 trainees per cohort. Thus, 3/4 x 1/12 = 3/48 (0.0625) in 
-# search 2 year.
-# Input: .25 - 3/48
+# - Best case is 3 trainees per cohort in search 2 year.
+# Input: (1*3+3)/(12*4)
 
-# - Worst case is 1 trainee per cohort. Thus, 1/4 trainees x 1/12 = 1/48 (2.08%)
-# in search 2 year.
-# Input: 1 - 1/48
+# - Worst case is 1 trainee per cohort in search 2 year.
+# Input: (1+12*3)/(12*4)
 
 # Base-Case Value
-base_ACT02<-npv_calc_utility(sear_y_2 = .5 - 2/48)
+base_ACT02<-npv_calc_utility(sear_y_2 = (1*2+6*2)/(12*4))
 best_ACT02<-npv_calc_utility(COE_util = 0.90, 
-                     sear_y_2 = .25 - 3/48, 
+                     sear_y_2 = (1*3+3)/(12*4), 
                      sear_y_3 = 0.01, 
                      prob_ris = 0.076, 
                      mrp_coef = 0.75,
                      privat_r = 0.05,
                      social_r = 0.01)
 worst_ACT02<-npv_calc_utility(COE_util = 0.10, 
-                      sear_y_2 = 1 - 1/48, 
+                      sear_y_2 = (1+12*3)/(12*4), 
                       sear_y_3 = 0.09, 
                       prob_ris = 0.13, 
                       mrp_coef = 0.65,
@@ -350,7 +348,7 @@ print(paste("ACT-03 Worst: Difference:", dollar_format()(worst_ACT03$npv - worst
 
 # - Best case: recruits 10 trainees per cohort after first cohort due to website.
 
-# - Best case: recruits 2 trainees per cohort after first cohort due to website.
+# - Worst case: recruits 2 trainees per cohort after first cohort due to website.
 
 base_ACT04<-npv_calc_utility(add_to_each_new_cohort = 6)
 best_ACT04<-npv_calc_utility(add_to_each_new_cohort = 10,
@@ -429,13 +427,13 @@ print(paste("ACT-06 Worst: Difference:", dollar_format()(worst_ACT06$npv - worst
 # portion of the cohort into 1-month fast-track jobs (1/12 friction) via the IAB,
 # dropping the weighted average search lag (sear_y_2) across the whole cohort.
 
-# Base-Case: Add 4 trainees.  2 out of 4 baseline slots skip search friction
-base_ACT07  <- npv_calc_utility(add_to_each_new_cohort = 4,
-                                sear_y_2               = 0.50 - (2/48))
+# Base-Case: Add 6 trainees.  2 out of 4 baseline slots skip search friction
+base_ACT07  <- npv_calc_utility(add_to_each_new_cohort = 6,
+                                sear_y_2               = (1*2+6*2)/(12*4))
 
-# Best-Case: Add 6 trainees. 3 out of 4 baseline slots skip search friction.
-best_ACT07  <- npv_calc_utility(add_to_each_new_cohort = 6,
-                                sear_y_2               = 0.25 - (3/48),
+# Best-Case: Add 10 trainees. 3 out of 4 baseline slots skip search friction.
+best_ACT07  <- npv_calc_utility(add_to_each_new_cohort = 10,
+                                sear_y_2               = (1*3+3)/(12*4),
                                 COE_util               = 0.90, 
                                 sear_y_3               = 0.01, 
                                 prob_ris               = 0.076, 
@@ -446,7 +444,7 @@ best_ACT07  <- npv_calc_utility(add_to_each_new_cohort = 6,
 # Worst-Case: Failed role. Adds 2 trainees. 1 slot gets placed,
 # but the rest face unmitigated 100% friction (sear_y_2 = 1.0) due to lack of support.
 worst_ACT07 <- npv_calc_utility(add_to_each_new_cohort = 2, 
-                                sear_y_2               = 1.00 - (1/48),
+                                sear_y_2               = (1+12*3)/(12*4),
                                 COE_util               = 0.10, 
                                 sear_y_3               = 0.09, 
                                 prob_ris               = 0.130, 
@@ -472,35 +470,33 @@ print(paste("ACT-07 Worst: Difference:", dollar_format()(worst_ACT07$npv - worst
 # The article "The Skill Premium in Times of Rapid Technological Change"
 # mentioned that 57% of jobs involving a new technology require a college 
 # degree compared to 34% of jobs involving 80-aged technologies. 32% for 
-# college premium is due to technology shock. Thus:
-# impact = search_y_X * (1- search_y_X * 16%)
-
-# Because (0% * NC x 2 + 32% x CE)/4 = 16%
-# Assume that being frontier increases MRP by 0.01.
+# college premium is due to technology shock. But in conservative mindset, thus:
+# new_CE_target_wage = parameter_CE_target_wage * 1.16
 
 # Base-Case: Apply the 16% tech shock discount to Year 2 friction and add the 0.01 MRP lift.
-base_ACT08  <- npv_calc_utility(sear_y_2 = 0.50 * (1 - (0.50 * 0.16)),
-                                sear_y_3=0.05 * (1 - (0.05 * 0.16)), 
+base_ACT08  <- npv_calc_utility(CE_target_wage=parameter_CE_target_wage * 1.16,
                                 mrp_coef = 0.70 + 0.01)
+
 # Best-Case: Fully optimized implementation. The tech shock discount compounds with
 # an optimized baseline search parameter (0.25) and captures the 0.01 frontier lift.
-best_ACT08  <- npv_calc_utility(sear_y_2 = 0.25 * (1 - (0.25 * 0.16)), # = 0.24
-                                mrp_coef = 0.75 + 0.01,
+best_ACT08  <- npv_calc_utility(CE_target_wage=parameter_CE_target_wage * 1.16,
                                 COE_util=0.90, 
-                                sear_y_3=0.01 * (1 - (0.01 * 0.16)), 
-                                prob_ris=0.076, 
+                                sear_y_2=0.25, 
+                                sear_y_3=0.01, 
+                                prob_ris=0.076,
+                                mrp_coef=0.75 + 0.01, 
                                 privat_r=0.05, 
                                 social_r=0.01)
 
 # Worst-Case: Disorganized execution / "Data Swamp". Trainees fail to realize the 
 # tech shock discount or the productivity lift due to severe technical friction.
-worst_ACT08 <- npv_calc_utility(sear_y_2 = 1.00 * (1 - (1.00 * 0.00)), # No discount
-                                mrp_coef = 0.65,                      # Systemic penalty
-                                sear_y_3 = 0.09 * (1 - (0.09 * 0.00)), 
-                                privat_r = 0.10,
-                                social_r = 0.05,
-                                COE_util=0.10, 
-                                prob_ris=0.13)
+worst_ACT08 <- npv_calc_utility(COE_util=0.10, 
+                                sear_y_2=1.00, 
+                                sear_y_3=0.09, 
+                                prob_ris=0.13, 
+                                mrp_coef=0.65, 
+                                privat_r=0.1, 
+                                social_r=0.05)
 
 print(paste("ACT-08 Base: Difference:", dollar_format()(base_ACT08$npv - base_util$npv), 
             "| Social Difference:", dollar_format()(base_ACT08$snpv - base_util$snpv)))
@@ -510,3 +506,53 @@ print(paste("ACT-08 Best: Difference:", dollar_format()(best_ACT08$npv - best_ut
 
 print(paste("ACT-08 Worst: Difference:", dollar_format()(worst_ACT08$npv - worst_util$npv), 
             "| Social Difference:", dollar_format()(worst_ACT08$snpv - worst_util$snpv)))
+
+# ACT-09------------------------------------------------------------------------
+# ACT-08: Data Science Mentorship: Assign a dedicated Data Scientist to 
+# mentorship.
+
+# This implies that NC turns into CE at entry level and MRP increases to 1.
+# BLS report in May 2022 is 25th percentile annual wage is $96,790, adjusting to
+# $103,278.44 in October 2025.
+
+# Bettinger & Baker (2014) RCT Benchmark: Proactive student coaching and 
+# academic mentorship reduced university dropout/attrition by 5.0 to 9.0 
+# percentage points (ATE = -0.05 to -0.09).
+
+# Direct mentorship mitigates the attrition rate.
+parameter_Entry_CE_target_wage=103278.44
+parameter_reduced_attrition_rate=
+
+base_ACT09  <- npv_calc_utility(NC_target_wage = parameter_Entry_CE_target_wage, 
+                                onboard_NC=parameter_onboard_CE, 
+                                attrition_rate=parameter_attrition_rate - 0.07,
+                                mrp_coef=1)
+best_ACT09 <- npv_calc_utility(NC_target_wage = parameter_Entry_CE_target_wage, 
+                               onboard_NC=parameter_onboard_CE, 
+                               attrition_rate=parameter_attrition_rate - 0.09,
+                               COE_util=0.90, 
+                               sear_y_2=0.25, 
+                               sear_y_3=0.01, 
+                               prob_ris=0.076, 
+                               mrp_coef=1, 
+                               privat_r=0.05, 
+                               social_r=0.01)
+worst_ACT09 <- npv_calc_utility(NC_target_wage = parameter_Entry_CE_target_wage, 
+                                onboard_NC=parameter_onboard_CE, 
+                                attrition_rate=parameter_attrition_rate - 0.05,
+                                COE_util=0.10, 
+                                sear_y_2=1.00, 
+                                sear_y_3=0.09, 
+                                prob_ris=0.13, 
+                                mrp_coef=1, 
+                                privat_r=0.1, 
+                                social_r=0.05)
+
+print(paste("ACT-09 Base: Difference:", dollar_format()(base_ACT09$npv - base_util$npv), 
+            "| Social Difference:", dollar_format()(base_ACT09$snpv - base_util$snpv)))
+
+print(paste("ACT-09 Best: Difference:", dollar_format()(best_ACT09$npv - best_util$npv), 
+            "| Social Difference:", dollar_format()(best_ACT09$snpv - best_util$snpv)))
+
+print(paste("ACT-09 Worst: Difference:", dollar_format()(worst_ACT09$npv - worst_util$npv), 
+            "| Social Difference:", dollar_format()(worst_ACT09$snpv - worst_util$snpv)))
