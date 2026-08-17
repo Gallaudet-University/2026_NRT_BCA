@@ -266,6 +266,8 @@ Bureau of Labor Statistics. (2022). Software developers (Occupational Employment
 
 Bureau of Labor Statistics. (2026). Alternative measures of labor underutilization for states (Local Area Unemployment Statistics). U.S. Department of Labor. https://www.bls.gov/lau/stalt.htm
 
+Environmental Protection Agency. (2016). Fact sheet: Social cost of carbon. U.S. Environmental Protection Agency. https://www.epa.gov/sites/default/files/2016-12/documents/social_cost_of_carbon_fact_sheet.pdf
+
 Fokal. (n.d.). Machine learning engineer salary reference. Fokal AI SEO Research. https://www.fokal.com/ai-seo-research/machine-learning-engineer-salary/
 
 InterviewCost. (n.d.). SHRM cost per hire guide: Technical and engineering sourcing premium metrics. https://interviewcost.com/shrm-cost-per-hire
